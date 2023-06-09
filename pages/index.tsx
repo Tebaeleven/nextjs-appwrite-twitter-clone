@@ -1,10 +1,11 @@
 import { Client, Databases, Account } from "appwrite";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function Home({ tweets }) {
+	const [user, setUser] = useState(null);
+	
     useEffect(() => {
-        const client = new Client();
-
+		const client = new Client();
         const account = new Account(client);
 
         client
@@ -15,13 +16,14 @@ export default function Home({ tweets }) {
 
         promise.then(
             function (response) {
-                console.log(response); // Success
+				console.log(response); // Success
+				setUser(response.email)
             },
             function (error) {
                 console.log(error); // Failure
             }
         );
-    },[]);
+    }, []);
 
     // サインアップ（新規登録）
     const createUser = async () => {
@@ -76,7 +78,8 @@ export default function Home({ tweets }) {
 
     return (
         <>
-            <div>
+			<div>
+				<h1 className="text-5xl">こんにちは、{user} さん</h1>
                 <button
                     onClick={createUser}
                     className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
@@ -96,7 +99,6 @@ export default function Home({ tweets }) {
 
 export async function getServerSideProps(context) {
     const client = new Client();
-
     client
         .setEndpoint(process.env.NEXT_PUBLIC_ENDPOINT)
         .setProject(process.env.NEXT_PUBLIC_PROJECT);
