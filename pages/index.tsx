@@ -1,7 +1,28 @@
-import { Client, Databases , Account} from 'appwrite'
-
+import { Client, Databases, Account } from "appwrite";
+import { useEffect } from "react";
 
 export default function Home({ tweets }) {
+    useEffect(() => {
+        const client = new Client();
+
+        const account = new Account(client);
+
+        client
+            .setEndpoint(process.env.NEXT_PUBLIC_ENDPOINT)
+            .setProject(process.env.NEXT_PUBLIC_PROJECT);
+
+        const promise = account.get();
+
+        promise.then(
+            function (response) {
+                console.log(response); // Success
+            },
+            function (error) {
+                console.log(error); // Failure
+            }
+        );
+    },[]);
+
     // サインアップ（新規登録）
     const createUser = async () => {
         const client = new Client();
@@ -74,20 +95,20 @@ export default function Home({ tweets }) {
 }
 
 export async function getServerSideProps(context) {
-  const client = new Client();
-  
-  client
-    .setEndpoint(process.env.NEXT_PUBLIC_ENDPOINT)
-    .setProject(process.env.NEXT_PUBLIC_PROJECT);
-  
-  const databases = new Databases(client);
+    const client = new Client();
 
-  const tweets = await databases.listDocuments(
-      process.env.NEXT_PUBLIC_DATABASE,
-      process.env.NEXT_PUBLIC_TWEETS_COLLETCION
-  );
+    client
+        .setEndpoint(process.env.NEXT_PUBLIC_ENDPOINT)
+        .setProject(process.env.NEXT_PUBLIC_PROJECT);
 
-  return {
-    props:{tweets},
-  }
+    const databases = new Databases(client);
+
+    const tweets = await databases.listDocuments(
+        process.env.NEXT_PUBLIC_DATABASE,
+        process.env.NEXT_PUBLIC_TWEETS_COLLETCION
+    );
+
+    return {
+        props: { tweets },
+    };
 }
