@@ -2,10 +2,10 @@ import { Client, Databases, Account } from "appwrite";
 import { useEffect, useState } from "react";
 
 export default function Home({ tweets }) {
-	const [user, setUser] = useState(null);
-	
+    const [user, setUser] = useState(null);
+
     useEffect(() => {
-		const client = new Client();
+        const client = new Client();
         const account = new Account(client);
 
         client
@@ -16,8 +16,8 @@ export default function Home({ tweets }) {
 
         promise.then(
             function (response) {
-				console.log(response); // Success
-				setUser(response.email)
+                console.log(response); // Success
+                setUser(response.email);
             },
             function (error) {
                 console.log(error); // Failure
@@ -43,7 +43,7 @@ export default function Home({ tweets }) {
 
         response.then(
             function (response) {
-                console.log(response); // Success
+				console.log(response); // Success
             },
             function (error) {
                 console.log(error); // Failure
@@ -68,7 +68,31 @@ export default function Home({ tweets }) {
 
         response.then(
             function (response) {
-                console.log(response); // Success
+				console.log(response); // Success
+                setUser(response.providerUid);
+            },
+            function (error) {
+                console.log(error); // Failure
+            }
+        );
+    };
+
+    // ログアウト
+    const userLogout = async () => {
+        const client = new Client();
+
+        const account = new Account(client);
+
+        client
+            .setEndpoint(process.env.NEXT_PUBLIC_ENDPOINT)
+            .setProject(process.env.NEXT_PUBLIC_PROJECT);
+
+        const response = account.deleteSessions();
+
+        response.then(
+            function (response) {
+				console.log(response); // Success
+				setUser(null);
             },
             function (error) {
                 console.log(error); // Failure
@@ -78,8 +102,8 @@ export default function Home({ tweets }) {
 
     return (
         <>
-			<div>
-				<h1 className="text-5xl">こんにちは、{user} さん</h1>
+            <div>
+                <h1 className="text-5xl">こんにちは、{user} さん</h1>
                 <button
                     onClick={createUser}
                     className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
@@ -91,6 +115,12 @@ export default function Home({ tweets }) {
                     className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                 >
                     email+passwordログイン
+                </button>
+                <button
+                    onClick={userLogout}
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                >
+                    ログアウト
                 </button>
             </div>
         </>
